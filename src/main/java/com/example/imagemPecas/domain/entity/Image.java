@@ -8,7 +8,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-
 import java.time.LocalDateTime;
 
 @Entity
@@ -23,7 +22,7 @@ public class Image {
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
     @Column
-    private String nome;
+    private String name;
     @Column
     private Long size;
     @Column
