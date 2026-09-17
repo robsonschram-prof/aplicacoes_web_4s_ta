@@ -12,7 +12,6 @@ public enum ImageExtension {
     @Getter
     private final MediaType mediaType;
 
-
     ImageExtension(MediaType mediaType) {
         this.mediaType = mediaType;
     }

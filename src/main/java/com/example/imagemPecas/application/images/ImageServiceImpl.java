@@ -6,7 +6,6 @@ import com.example.imagemPecas.infra.repository.ImageRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.util.Optional;
 
 @Service
@@ -23,6 +22,6 @@ public class ImageServiceImpl implements ImageService {
 
     @Override
     public Optional<Image> getById(String id) {
-        return repository.findById();
+        return repository.findById(id);
     }
 }
