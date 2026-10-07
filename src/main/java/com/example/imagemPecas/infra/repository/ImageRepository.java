@@ -2,7 +2,6 @@ package com.example.imagemPecas.infra.repository;
 
 import com.example.imagemPecas.domain.entity.Image;
 import com.example.imagemPecas.domain.enums.ImageExtension;
-import jakarta.persistence.criteria.Root;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
@@ -10,45 +9,39 @@ import org.springframework.util.StringUtils;
 
 import java.util.List;
 
+// "import static": permite chamar os métodos estáticos direto pelo nome,
+// sem prefixar com a classe (ex.: conjunction() em vez de GenericSpecs.conjunction()).
+import static com.example.imagemPecas.infra.repository.specs.GenericSpecs.conjunction;
+import static com.example.imagemPecas.infra.repository.specs.ImageSpecs.*; // extensionEqual, nameLike, tagsLike
+import static org.springframework.data.jpa.domain.Specification.anyOf;
+import static org.springframework.data.jpa.domain.Specification.where;
+
+// JpaRepository: métodos prontos (save, findById, findAll...).
+// JpaSpecificationExecutor: permite pesquisar usando Specification (filtros dinâmicos).
 public interface ImageRepository extends JpaRepository<Image, String>,
         JpaSpecificationExecutor<Image> {
 
     /**
-     *
-     * @param extension
-     * @param query
-     * @return
-     * SELECT *FROM IMAGE WHERE 1 =1 AND EXTENSION = 'PNG' AND ( NAME LIKE 'QUERY'
-     * OR TAGS LIKE 'QUERY')
-     *
+     * SQL que queremos gerar:
+     * SELECT * FROM IMAGE WHERE 1 = 1
+     *   AND EXTENSION = 'PNG'                          (só se extension foi informada)
+     *   AND (NAME LIKE '%QUERY%' OR TAGS LIKE '%QUERY%') (só se query foi informada)
      */
+    default List<Image> findByExtensionAndNameOrTagsLike(ImageExtension extension, String query) {
 
-    default List<Image> findByExtensionAndNameOrTagsLike(ImageExtension extension,
-                                                         String query){
-        //SELECT * FROM IMAGE WHERE 1 = 1
-        Specification<Image> conjunction = (root, q, criteriaBuilder) ->
-                criteriaBuilder.conjunction();
-        Specification<Image> spec = Specification.where(conjunction);
+        // WHERE 1 = 1 → condição-base, sempre verdadeira (PASSO 24 – GenericSpecs)
+        Specification<Image> spec = where(conjunction());
 
-        if(extension != null){
-            //AND EXTENSION = 'PNG'
-            Specification<Image> extensionEqual = (root, q, cb) ->
-                    cb.equal(root.get("extension"), extension);
-            spec = spec.and(extensionEqual);
+        // AND EXTENSION = 'PNG' → só entra se a extensão foi informada (PASSO 21)
+        if (extension != null) {
+            spec = spec.and(extensionEqual(extension)); // Specification é imutável: sempre reatribuir!
         }
 
-        if(StringUtils.hasText(query)){
-            // AND (NAME LIKE 'QUERY' OR TAGS LIKE 'QUERY')
-            Specification<Image> nameLike = (root, q, cb) ->
-                    cb.like(cb.upper(root.get("name")),"%" + query.toUpperCase() + "%");
-
-            Specification<Image> tagsLike = (root, q, cb) ->
-                    cb.like(cb.upper(root.get("tags")),"%" + query.toUpperCase() + "%");
-
-            Specification<Image> nameOrTagsLike = Specification.allOf(nameLike, tagsLike);
-
-            spec = spec.and(nameOrTagsLike);
+        // AND (NAME LIKE ... OR TAGS LIKE ...) → só entra se a query tem texto (PASSO 22)
+        if (StringUtils.hasText(query)) {
+            spec = spec.and(anyOf(nameLike(query), tagsLike(query))); // anyOf = OR
         }
-        return findAll(spec);
+
+        return findAll(spec); // executa a consulta montada
     }
 }
