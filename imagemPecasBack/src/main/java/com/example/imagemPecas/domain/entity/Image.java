@@ -38,7 +38,11 @@ public class Image {
     private byte[] file;
 
 
+    // [AULA 14 - Passo 28] nome do arquivo sugerido pelo navegador no download.
+    // Junta: nome + "." + extensão em minúsculas -> ex: "placa mãe.jpeg"
+    // (antes saía "placa mãe.JPEG"; o toLowerCase() deixa no padrão usual de arquivos)
+    // Esse nome é usado no cabeçalho Content-Disposition do ImagesController.
     public String getFileName(){
-        return getName().concat(".").concat(getExtension().name());
+        return getName().concat(".").concat(getExtension().name().toLowerCase());
     }
 }

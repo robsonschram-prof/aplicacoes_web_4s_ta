@@ -1,0 +1,67 @@
+{
+  "_type": "export",
+  "__export_format": 4,
+  "__export_date": "2026-11-24T15:35:00.000Z",
+  "__export_source": "insomnia.desktop.app:v13.4.0",
+  "resources": [
+    {
+      "_id": "wrk_imagempecas",
+      "_type": "workspace",
+      "parentId": null,
+      "name": "imagemPecas API",
+      "description": "Requisições do projeto imagemPecas (Aplicações Web). Back-end em http://localhost:8080",
+      "scope": "collection"
+    },
+    {
+      "_id": "req_buscar",
+      "_type": "request",
+      "parentId": "wrk_imagempecas",
+      "name": "BUSCAR",
+      "description": "Pesquisa imagens. query = trecho do nome/tags; extension = PNG, JPEG ou GIF. Desmarque os parâmetros para trazer todas.",
+      "method": "GET",
+      "url": "http://localhost:8080/v1/images",
+      "body": {},
+      "parameters": [
+        { "name": "query", "value": "", "disabled": true },
+        { "name": "extension", "value": "", "disabled": true }
+      ],
+      "headers": [],
+      "metaSortKey": -1000
+    },
+    {
+      "_id": "req_receber",
+      "_type": "request",
+      "parentId": "wrk_imagempecas",
+      "name": "RECEBER",
+      "description": "Mostra/baixa uma imagem pelo ID. Para outra imagem, troque o ID (ele aparece no fim do campo url do BUSCAR).",
+      "method": "GET",
+      "url": "http://localhost:8080/v1/images/4fd7e8e4-aae3-4cdd-9bd5-e562f4fc13fa",
+      "body": {},
+      "parameters": [],
+      "headers": [],
+      "metaSortKey": -900
+    },
+    {
+      "_id": "req_enviar",
+      "_type": "request",
+      "parentId": "wrk_imagempecas",
+      "name": "ENVIAR",
+      "description": "Upload de imagem (multipart). No campo file, clique em 'Choose File' e escolha uma imagem do computador. tags separadas por vírgula.",
+      "method": "POST",
+      "url": "http://localhost:8080/v1/images",
+      "body": {
+        "mimeType": "multipart/form-data",
+        "params": [
+          { "name": "file", "type": "file", "fileName": "", "disabled": false },
+          { "name": "name", "value": "placa mae", "disabled": false },
+          { "name": "tags", "value": "placa,hardware", "disabled": false }
+        ]
+      },
+      "parameters": [],
+      "headers": [
+        { "name": "Content-Type", "value": "multipart/form-data" }
+      ],
+      "metaSortKey": -800
+    }
+  ]
+}
